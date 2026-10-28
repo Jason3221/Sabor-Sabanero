@@ -73,20 +73,22 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ),
           ),
 
-          // Contenido
+          // Contenido: todo en una sola lista desplazable, así el
+          // encabezado (logo + "Nuestro Menú") se desliza y desaparece
+          // junto con el resto al bajar, dejando más espacio para los platos.
           SafeArea(
-            child: Column(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(0, 4, 0, 110),
               children: [
-                const SizedBox(height: 4),
                 _buildHeaderWithLogo(context),
                 const SizedBox(height: 18),
                 _buildTitleBlock(),
                 const SizedBox(height: 18),
                 _buildCategoryChips(),
                 const SizedBox(height: 14),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 110),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
                     children: [
                       ..._filteredDishes.map((dish) => _DishCard(
                             dish: dish,
