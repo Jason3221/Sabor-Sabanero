@@ -61,8 +61,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/image/fondoApp.png
-    - assets/image/ninoApp.png
     - assets/image/MoteDeQueso.jpg
     - assets/image/MojarraCoco.jpg
     - assets/image/CarneSalada.jpg
@@ -70,7 +68,7 @@ flutter:
     - assets/image/CarneroGuisado.png
     - assets/image/fondoRestaurantee.png
     - assets/image/welcome.png
-    - assets/image/boy.png
+    - assets/image/sinsinaty.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

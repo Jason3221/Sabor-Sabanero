@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../widgets/app_logo.dart';
 import 'catalog_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -18,7 +17,7 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           // Fondo: interior del restaurante
           Image.asset(
-            'assets/image/welcome.png',
+            'assets/image/sinsinaty.png',
             fit: BoxFit.cover,
           ),
 
@@ -29,10 +28,10 @@ class WelcomeScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.45),
-                  Colors.black.withOpacity(0.15),
-                  Colors.black.withOpacity(0.35),
-                  Colors.black.withOpacity(0.82),
+                  Colors.black.withValues(alpha: 0.45),
+                  Colors.black.withValues(alpha: 0.15),
+                  Colors.black.withValues(alpha: 0.35),
+                  Colors.black.withValues(alpha: 0.82),
                 ],
                 stops: const [0.0, 0.3, 0.6, 1.0],
               ),
@@ -48,7 +47,7 @@ class WelcomeScreen extends StatelessWidget {
               child: Icon(
                 Icons.waves_rounded,
                 size: 70,
-                color: _gold.withOpacity(0.4),
+                color: _gold.withValues(alpha: 0.4),
               ),
             ),
           ),
@@ -60,7 +59,7 @@ class WelcomeScreen extends StatelessWidget {
               child: Icon(
                 Icons.waves_rounded,
                 size: 70,
-                color: _gold.withOpacity(0.4),
+                color: _gold.withValues(alpha: 0.4),
               ),
             ),
           ),
@@ -71,17 +70,14 @@ class WelcomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 28),
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
-                  const AppLogo(),
-
-                  // Espacio flexible: aquí se ve el personaje, que ya viene
-                  // incluido en la imagen de fondo "welcome.png".
+                  // Espacio flexible: el logo y el personaje ya vienen
+                  // incluidos en la imagen de fondo "sinsinaty.png".
                   const Expanded(child: SizedBox.shrink()),
 
                   _buildWelcomeText(),
-                  const SizedBox(height: 26),
+                  const SizedBox(height: 22),
                   _buildButton(context),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 38),
                 ],
               ),
             ),
@@ -127,11 +123,11 @@ class WelcomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Sabor Caribe',
+          'Sinsinaty Express',
           textAlign: TextAlign.center,
           style: GoogleFonts.playfairDisplay(
             color: Colors.white,
-            fontSize: 38,
+            fontSize: 32,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -145,8 +141,6 @@ class WelcomeScreen extends StatelessWidget {
             height: 1.4,
           ),
         ),
-        const SizedBox(height: 10),
-        Icon(Icons.waves_rounded, color: _gold, size: 20),
       ],
     );
   }
@@ -165,19 +159,12 @@ class WelcomeScreen extends StatelessWidget {
           ),
           elevation: 4,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Explorar sabores',
-              style: GoogleFonts.poppins(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward, size: 20),
-          ],
+        child: Text(
+          'Explorar sabores',
+          style: GoogleFonts.poppins(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

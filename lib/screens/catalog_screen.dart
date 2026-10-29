@@ -16,7 +16,6 @@ class CatalogScreen extends StatefulWidget {
 
 class _CatalogScreenState extends State<CatalogScreen> {
   static const _gold = Color(0xFFFFC107);
-  static const _lightBlue = Color(0xFF6FD6E8);
 
   String _selectedCategory = 'Todos';
   final Set<String> _favorites = {};
@@ -63,10 +62,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.55),
-                  Colors.black.withOpacity(0.35),
-                  Colors.black.withOpacity(0.55),
-                  Colors.black.withOpacity(0.85),
+                  Colors.black.withValues(alpha: 0.78),
+                  Colors.black.withValues(alpha: 0.62),
+                  Colors.black.withValues(alpha: 0.78),
+                  Colors.black.withValues(alpha: 0.95),
                 ],
                 stops: const [0.0, 0.3, 0.7, 1.0],
               ),
@@ -136,7 +135,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withValues(alpha: 0.35),
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white24),
             ),
@@ -162,8 +161,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 6),
-        const AppLogo(titleSize: 28),
+        const SizedBox(height: 4),
+        const AppLogo(titleSize: 34),
       ],
     );
   }
@@ -210,15 +209,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            '〜',
-            style: GoogleFonts.poppins(
-              color: _lightBlue,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
         ],
       ),
     );
@@ -231,7 +221,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 14),
+        separatorBuilder: (_, _) => const SizedBox(width: 14),
         itemBuilder: (context, index) {
           final cat = categories[index];
           final selected = cat == _selectedCategory;
@@ -245,7 +235,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: selected ? _gold : Colors.black.withOpacity(0.35),
+                    color: selected ? _gold : Colors.black.withValues(alpha: 0.35),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: selected ? _gold : Colors.white24,
@@ -291,7 +281,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             bottom: MediaQuery.of(context).padding.bottom + 10,
           ),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.55),
+            color: Colors.black.withValues(alpha: 0.55),
             border: const Border(top: BorderSide(color: Colors.white10)),
           ),
           child: Row(
@@ -378,7 +368,7 @@ class _DishCard extends StatelessWidget {
         const Icon(Icons.star_rounded, size: 15, color: _gold),
       if (half) const Icon(Icons.star_half_rounded, size: 15, color: _gold),
       for (var i = 0; i < empty; i++)
-        Icon(Icons.star_border_rounded, size: 15, color: _gold.withOpacity(0.7)),
+        Icon(Icons.star_border_rounded, size: 15, color: _gold.withValues(alpha: 0.7)),
     ];
   }
 
@@ -392,9 +382,9 @@ class _DishCard extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.12)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
             ),
             child: Material(
               color: Colors.transparent,

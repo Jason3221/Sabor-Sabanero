@@ -1,45 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'palm_tree_icon.dart';
-
-/// Logo de Sabor Caribe reutilizable: palmera + nombre + ondita + subtítulo.
-/// Se usa tanto en la bienvenida como en el catálogo para mantener
-/// consistencia visual.
+/// Logotipo de texto de Sinsinaty Express: solo el nombre del restaurante
+/// y el subtítulo "GASTRONOMÍA COSTEÑA", sin iconos adicionales, para un
+/// look limpio que combina con el logo ya incluido en las fotos de fondo.
 class AppLogo extends StatelessWidget {
   final double titleSize;
 
   const AppLogo({super.key, this.titleSize = 28});
 
   static const _gold = Color(0xFFFFC107);
-  static const _lightBlue = Color(0xFF6FD6E8);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        PalmTreeIcon(size: titleSize * 1.15),
-        // Pequeño solape hacia el texto, como si la palmera "coronara"
-        // la unión entre "Sabor" y "Caribe".
-        Transform.translate(
-          offset: Offset(0, -titleSize * 0.12),
-          child: Text(
-            'Sabor Caribe',
-            style: GoogleFonts.pacifico(
-              fontSize: titleSize,
-              color: Colors.white,
-            ),
+        Text(
+          'Sinsinaty Express',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.pacifico(
+            fontSize: titleSize,
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.45),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 2),
-        const Icon(Icons.waves_rounded, color: _lightBlue, size: 18),
         const SizedBox(height: 6),
         Text(
           'GASTRONOMÍA COSTEÑA',
           style: GoogleFonts.poppins(
             color: _gold,
-            fontSize: 11,
+            fontSize: titleSize * 0.38,
             fontWeight: FontWeight.w600,
             letterSpacing: 2,
           ),

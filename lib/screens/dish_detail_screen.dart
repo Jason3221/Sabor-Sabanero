@@ -55,10 +55,10 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.6),
-                  Colors.black.withOpacity(0.4),
-                  Colors.black.withOpacity(0.78),
-                  Colors.black.withOpacity(0.92),
+                  Colors.black.withValues(alpha: 0.6),
+                  Colors.black.withValues(alpha: 0.4),
+                  Colors.black.withValues(alpha: 0.78),
+                  Colors.black.withValues(alpha: 0.92),
                 ],
                 stops: const [0.0, 0.3, 0.65, 1.0],
               ),
@@ -141,7 +141,7 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withValues(alpha: 0.35),
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white24),
             ),
@@ -166,115 +166,85 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-          child: Container(
-            height: 340,
-            width: double.infinity,
+        child: Container(
+          height: 340,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            color: Colors.black.withValues(alpha: 0.25),
+          ),
+          child: Stack(
+            fit: StackFit.expand,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: Colors.white.withOpacity(0.12)),
-              color: Colors.black.withOpacity(0.25),
-              gradient: RadialGradient(
-                radius: 0.95,
-                colors: [
-                  _gold.withOpacity(0.16),
-                  Colors.transparent,
-                ],
+            children: [
+              // Imagen del plato llenando todo el cuadro, con
+              // transformación 3D. Se escala un poco de más (overscan)
+              // para que al girar no se vean huecos en las esquinas.
+              Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.0015)
+                  ..rotateX(_rotX)
+                  ..rotateY(_rotY)
+                  ..scale(_scale * 1.28),
+                child: Image.asset(
+                  dish.imageAsset,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Sombra dinámica debajo del plato
-                Positioned(
-                  bottom: 40,
-                  child: Transform.translate(
-                    offset: Offset(_rotY * 46, 0),
-                    child: Container(
-                      width: 170 * _scale,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: RadialGradient(
-                          colors: [
-                            Colors.black.withOpacity(0.55),
-                            Colors.black.withOpacity(0.0),
-                          ],
-                        ),
-                      ),
-                    ),
+
+              // Viñeta sutil para que el texto/badge resalten sobre la foto
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.28),
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.4),
+                    ],
+                    stops: const [0.0, 0.45, 1.0],
                   ),
                 ),
+              ),
 
-                // Imagen del plato con transformación 3D
-                Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.0015)
-                    ..rotateX(_rotX)
-                    ..rotateY(_rotY)
-                    ..scale(_scale),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.4),
-                          blurRadius: 24,
-                          offset: const Offset(0, 14),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        dish.imageAsset,
-                        width: 230,
-                        height: 230,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              Positioned(
+                top: 14,
+                right: 14,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
                   ),
-                ),
-
-                Positioned(
-                  top: 14,
-                  right: 14,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.45),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: _gold.withOpacity(0.5)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.threesixty_rounded,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.45),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: _gold.withValues(alpha: 0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.threesixty_rounded,
+                        color: _gold,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Vista 3D',
+                        style: GoogleFonts.poppins(
                           color: _gold,
-                          size: 14,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Vista 3D',
-                          style: GoogleFonts.poppins(
-                            color: _gold,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -356,7 +326,7 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
         Icon(
           Icons.star_border_rounded,
           size: 16,
-          color: _gold.withOpacity(0.7),
+          color: _gold.withValues(alpha: 0.7),
         ),
     ];
   }
@@ -402,9 +372,9 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withOpacity(0.12)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
           child: Row(
             children: [
