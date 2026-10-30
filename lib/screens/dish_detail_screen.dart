@@ -1,19 +1,27 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 import '../models/dish.dart';
+import '../widgets/web_iframe_viewer.dart';
+
+/// URL del modelo 3D de referencia que se muestra en el botón "Ver en
+/// 3D" de todos los platos, mientras no haya un modelo específico por
+/// plato. Cuando existan modelos individuales, basta con cambiar esto
+/// por `dish.modelUrl` (o el campo que se agregue al modelo `Dish`).
+///
+/// Se sirve desde la API (en vez de como asset local de Flutter) porque
+/// así funciona igual en Web y en móvil/escritorio, sin depender de
+/// cómo cada plataforma empaqueta o sirve los archivos estáticos.
+const String _placeholderModelAsset =
+    'https://api-sincinaty-hwk2.onrender.com/public/models/pizza_test.glb';
 
 /// Pantalla de detalle de un plato: foto estándar del plato + botón
-/// "Ver en 3D" que abre una tarjeta con animación, lista para alojar
-/// más adelante el visor del modelo 3D real (.glb/.gltf), y lista de
-/// ingredientes.
-///
-/// Nota: el botón "Ver en 3D" por ahora abre una tarjeta de marcador de
-/// posición (placeholder). Cuando exista el archivo .glb de cada plato,
-/// esa tarjeta (`_Modal3DCard`) se reemplaza por un paquete como
-/// `model_viewer_plus` apuntando a `dish.modelAsset` o similar.
+/// "Ver en 3D" que abre una tarjeta con animación mostrando un modelo
+/// 3D real (.glb) con `model_viewer_plus`, y lista de ingredientes.
 class DishDetailScreen extends StatefulWidget {
   final Dish dish;
 
@@ -508,39 +516,39 @@ class _Modal3DCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 28),
-                    Container(
-                      width: 78,
-                      height: 78,
-                      decoration: BoxDecoration(
-                        color: _gold.withValues(alpha: 0.14),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: _gold.withValues(alpha: 0.4)),
-                      ),
-                      child: const Icon(
-                        Icons.view_in_ar_rounded,
-                        color: _gold,
-                        size: 36,
+                    const SizedBox(height: 14),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: Container(
+                        height: 280,
+                        width: double.infinity,
+                        color: Colors.black.withValues(alpha: 0.25),
+                        child: kIsWeb
+                            ? WebIframeViewer(
+                                src: 'model_viewer.html?src='
+                                    '${Uri.encodeComponent(_placeholderModelAsset)}',
+                              )
+                            : ModelViewer(
+                                backgroundColor: Colors.transparent,
+                                src: _placeholderModelAsset,
+                                alt: 'Modelo 3D de referencia',
+                                autoRotate: true,
+                                autoRotateDelay: 0,
+                                rotationPerSecond: '18deg',
+                                cameraControls: true,
+                                disableZoom: false,
+                                ar: false,
+                              ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     Text(
-                      'Vista 3D próximamente',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Aquí se mostrará el modelo 3D (.glb) de este plato, '
-                      'listo para girarlo y verlo de cerca.',
+                      'Modelo de referencia — arrastra para girarlo, '
+                      'pellizca para zoom.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        color: Colors.white60,
-                        fontSize: 12.5,
-                        height: 1.5,
+                        color: Colors.white54,
+                        fontSize: 11.5,
                       ),
                     ),
                   ],
