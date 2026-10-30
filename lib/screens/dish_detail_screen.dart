@@ -5,13 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/dish.dart';
 
-/// Pantalla de detalle de un plato: visor "3D" interactivo (gira con el
-/// dedo, pellizca para zoom) + lista de ingredientes.
+/// Pantalla de detalle de un plato: foto estándar del plato + botón
+/// "Ver en 3D" que abre una tarjeta con animación, lista para alojar
+/// más adelante el visor del modelo 3D real (.glb/.gltf), y lista de
+/// ingredientes.
 ///
-/// Nota: este visor simula profundidad rotando y escalando la foto del
-/// plato con transformaciones 3D (Matrix4 + perspectiva). No es un
-/// modelo 3D real (.glb/.gltf) — cuando existan esos archivos, se puede
-/// reemplazar fácilmente por un paquete como model_viewer_plus.
+/// Nota: el botón "Ver en 3D" por ahora abre una tarjeta de marcador de
+/// posición (placeholder). Cuando exista el archivo .glb de cada plato,
+/// esa tarjeta (`_Modal3DCard`) se reemplaza por un paquete como
+/// `model_viewer_plus` apuntando a `dish.modelAsset` o similar.
 class DishDetailScreen extends StatefulWidget {
   final Dish dish;
 
@@ -24,17 +26,30 @@ class DishDetailScreen extends StatefulWidget {
 class _DishDetailScreenState extends State<DishDetailScreen> {
   static const _gold = Color(0xFFFFC107);
 
-  double _scale = 1.0;
-  double _baseScale = 1.0;
-  double _rotX = 0.08;
-  double _rotY = -0.2;
-
-  void _resetView() {
-    setState(() {
-      _scale = 1.0;
-      _rotX = 0.08;
-      _rotY = -0.2;
-    });
+  void _open3DViewer(Dish dish) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Vista 3D',
+      barrierColor: Colors.black.withValues(alpha: 0.65),
+      transitionDuration: const Duration(milliseconds: 420),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          _Modal3DCard(dish: dish),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+          reverseCurve: Curves.easeIn,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: Transform.scale(
+            scale: 0.75 + (curved.value.clamp(0.0, 1.2) * 0.25),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -74,14 +89,6 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
                     child: Column(
                       children: [
                         _buildViewer(dish),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Arrastra para girar  •  Pellizca para zoom',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white38,
-                            fontSize: 11.5,
-                          ),
-                        ),
                         const SizedBox(height: 24),
                         _buildInfoHeader(dish),
                         const SizedBox(height: 26),
@@ -124,7 +131,7 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
               ),
             ),
           ),
-          _circleButton(icon: Icons.refresh_rounded, onTap: _resetView),
+          const SizedBox(width: 42),
         ],
       ),
     );
@@ -153,99 +160,43 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
   }
 
   Widget _buildViewer(Dish dish) {
-    return GestureDetector(
-      onScaleStart: (details) => _baseScale = _scale,
-      onScaleUpdate: (details) {
-        setState(() {
-          _scale = (_baseScale * details.scale).clamp(0.7, 2.2);
-          _rotY =
-              (_rotY + details.focalPointDelta.dx * 0.012).clamp(-1.2, 1.2);
-          _rotX =
-              (_rotX - details.focalPointDelta.dy * 0.012).clamp(-0.6, 0.6);
-        });
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Container(
-          height: 340,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-            color: Colors.black.withValues(alpha: 0.25),
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            alignment: Alignment.center,
-            children: [
-              // Imagen del plato llenando todo el cuadro, con
-              // transformación 3D. Se escala un poco de más (overscan)
-              // para que al girar no se vean huecos en las esquinas.
-              Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.0015)
-                  ..rotateX(_rotX)
-                  ..rotateY(_rotY)
-                  ..scale(_scale * 1.28),
-                child: Image.asset(
-                  dish.imageAsset,
-                  fit: BoxFit.cover,
-                ),
-              ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        height: 210,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Foto estándar del plato, horizontal y recortada en todo
+            // el cuadro.
+            Image.asset(dish.imageAsset, fit: BoxFit.cover),
 
-              // Viñeta sutil para que el texto/badge resalten sobre la foto
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.28),
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.4),
-                    ],
-                    stops: const [0.0, 0.45, 1.0],
-                  ),
+            // Viñeta sutil para que el botón resalte sobre la foto
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.35),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.35],
                 ),
               ),
+            ),
 
-              Positioned(
-                top: 14,
-                right: 14,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.45),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _gold.withValues(alpha: 0.5)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.threesixty_rounded,
-                        color: _gold,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Vista 3D',
-                        style: GoogleFonts.poppins(
-                          color: _gold,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            Positioned(
+              top: 14,
+              right: 14,
+              child: _View3DButton(onTap: () => _open3DViewer(dish)),
+            ),
+          ],
         ),
       ),
     );
@@ -433,6 +384,170 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
             const SizedBox(width: 8),
             const Icon(Icons.shopping_bag_rounded, size: 18),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Botón dorado "Ver en 3D" que se posiciona sobre la foto del plato.
+class _View3DButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _View3DButton({required this.onTap});
+
+  static const _gold = Color(0xFFFFC107);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: _gold,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: _gold.withValues(alpha: 0.4),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.view_in_ar_rounded,
+                color: Color(0xFF17323D),
+                size: 16,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Ver en 3D',
+                style: GoogleFonts.poppins(
+                  color: const Color(0xFF17323D),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Tarjeta modal que se abre al tocar "Ver en 3D". Por ahora es un
+/// marcador de posición con fondo oscuro/translúcido; cuando exista el
+/// archivo .glb/.gltf del plato, el contenido central de esta tarjeta
+/// se reemplaza por el widget del visor 3D real (p. ej. model_viewer_plus).
+class _Modal3DCard extends StatelessWidget {
+  final Dish dish;
+
+  const _Modal3DCard({required this.dish});
+
+  static const _gold = Color(0xFFFFC107);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(22, 18, 22, 26),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: _gold.withValues(alpha: 0.35)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            dish.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).maybePop(),
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.08),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close_rounded,
+                              color: Colors.white70,
+                              size: 17,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 28),
+                    Container(
+                      width: 78,
+                      height: 78,
+                      decoration: BoxDecoration(
+                        color: _gold.withValues(alpha: 0.14),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: _gold.withValues(alpha: 0.4)),
+                      ),
+                      child: const Icon(
+                        Icons.view_in_ar_rounded,
+                        color: _gold,
+                        size: 36,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Vista 3D próximamente',
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Aquí se mostrará el modelo 3D (.glb) de este plato, '
+                      'listo para girarlo y verlo de cerca.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white60,
+                        fontSize: 12.5,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

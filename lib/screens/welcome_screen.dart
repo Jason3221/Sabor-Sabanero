@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'catalog_screen.dart';
+import 'home_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -17,7 +17,7 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           // Fondo: interior del restaurante
           Image.asset(
-            'assets/image/sinsinaty.png',
+            'assets/image/welcome.png',
             fit: BoxFit.cover,
           ),
 
@@ -123,7 +123,7 @@ class WelcomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Sinsinaty Express',
+          'Sincinaty Express',
           textAlign: TextAlign.center,
           style: GoogleFonts.playfairDisplay(
             color: Colors.white,
@@ -150,7 +150,7 @@ class WelcomeScreen extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () => _goToCatalog(context),
+        onPressed: () => _goToHome(context),
         style: ElevatedButton.styleFrom(
           backgroundColor: _gold,
           foregroundColor: const Color(0xFF17323D),
@@ -170,13 +170,13 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  void _goToCatalog(BuildContext context) {
+  void _goToHome(BuildContext context) {
     Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 600),
         reverseTransitionDuration: const Duration(milliseconds: 400),
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const CatalogScreen(),
+            const HomeScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           final fade = CurvedAnimation(
             parent: animation,

@@ -17,7 +17,7 @@ class AppLogo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Sinsinaty Express',
+          'Sincinaty Express',
           textAlign: TextAlign.center,
           style: GoogleFonts.pacifico(
             fontSize: titleSize,

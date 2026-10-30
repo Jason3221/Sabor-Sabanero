@@ -5,7 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/dish.dart';
 import '../widgets/app_logo.dart';
+import '../widgets/bottom_nav.dart';
 import 'dish_detail_screen.dart';
+import 'home_screen.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -120,7 +122,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: BottomNav(
+        selectedIndex: 1,
+        onTap: (i) => _handleNavTap(context, i),
+      ),
     );
   }
 
@@ -264,86 +269,30 @@ class _CatalogScreenState extends State<CatalogScreen> {
     );
   }
 
-  Widget _buildBottomNav(BuildContext context) {
-    final items = <_NavItem>[
-      _NavItem(icon: Icons.home_rounded, label: 'Inicio'),
-      _NavItem(icon: Icons.dinner_dining_rounded, label: 'Catálogo'),
-      _NavItem(icon: Icons.favorite_border_rounded, label: 'Favoritos'),
-      _NavItem(icon: Icons.person_outline_rounded, label: 'Perfil'),
-    ];
-
-    return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: EdgeInsets.only(
-            top: 12,
-            bottom: MediaQuery.of(context).padding.bottom + 10,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.55),
-            border: const Border(top: BorderSide(color: Colors.white10)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(items.length, (i) {
-              final selected = i == 1; // "Catálogo" activo
-              final item = items[i];
-              return GestureDetector(
-                onTap: () {
-                  if (!selected) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Próximamente: ${item.label}'),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: const Color(0xFF0D3B4C),
-                      ),
-                    );
-                  }
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      item.icon,
-                      color: selected ? _gold : Colors.white70,
-                      size: 24,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.label,
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: selected ? _gold : Colors.white70,
-                        fontWeight:
-                            selected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                    ),
-                    if (selected)
-                      Container(
-                        margin: const EdgeInsets.only(top: 3),
-                        width: 18,
-                        height: 2.5,
-                        decoration: BoxDecoration(
-                          color: _gold,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                  ],
-                ),
-              );
-            }),
-          ),
+  void _handleNavTap(BuildContext context, int index) {
+    if (index == 1) return;
+    if (index == 0) {
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 350),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const HomeScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
         ),
+      );
+      return;
+    }
+    final labels = {2: 'Favoritos', 3: 'Perfil'};
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Próximamente: ${labels[index]}'),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFF0D3B4C),
       ),
     );
   }
-}
-
-class _NavItem {
-  final IconData icon;
-  final String label;
-  _NavItem({required this.icon, required this.label});
 }
 
 class _DishCard extends StatelessWidget {
