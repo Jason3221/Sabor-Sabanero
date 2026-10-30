@@ -50,19 +50,5 @@
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
   <script src="flutter_bootstrap.js" async></script>
-
-  <!--
-    "Despierta" el servidor donde viven los modelos 3D (Render, plan
-    gratuito) apenas carga la página, para que cuando el usuario toque
-    "Ver en 3D" el servidor ya esté activo y el modelo cargue rápido.
-    Si falla (sin internet, servidor caído, etc.) no pasa nada, es
-    silencioso.
-  -->
-  <script>
-    fetch('https://api-sincinaty-hwk2.onrender.com/public/models/pizza_test.glb', {
-      method: 'HEAD',
-      mode: 'no-cors',
-    }).catch(function () {});
-  </script>
 </body>
 </html>

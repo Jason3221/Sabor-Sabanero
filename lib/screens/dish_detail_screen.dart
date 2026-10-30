@@ -8,16 +8,17 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 import '../models/dish.dart';
 import '../widgets/web_iframe_viewer.dart';
 
-/// URL del modelo 3D de referencia que se muestra en el botón "Ver en
+/// Ruta del modelo 3D de referencia que se muestra en el botón "Ver en
 /// 3D" de todos los platos, mientras no haya un modelo específico por
 /// plato. Cuando existan modelos individuales, basta con cambiar esto
-/// por `dish.modelUrl` (o el campo que se agregue al modelo `Dish`).
+/// por `dish.modelAsset` (o el campo que se agregue al modelo `Dish`).
 ///
-/// Se sirve desde la API (en vez de como asset local de Flutter) porque
-/// así funciona igual en Web y en móvil/escritorio, sin depender de
-/// cómo cada plataforma empaqueta o sirve los archivos estáticos.
-const String _placeholderModelAsset =
-    'https://api-sincinaty-hwk2.onrender.com/public/models/pizza_test.glb';
+/// Se sirve como archivo estático del propio sitio (`web/models/pizza.glb`
+/// en Web, el asset de Flutter en móvil/escritorio) en vez de un servidor
+/// externo, para que cargue siempre al instante y no dependa de que otro
+/// servidor esté "despierto".
+const String _placeholderModelAssetWeb = 'models/pizza.glb';
+const String _placeholderModelAsset = 'assets/models/pizza.glb';
 
 /// Pantalla de detalle de un plato: foto estándar del plato + botón
 /// "Ver en 3D" que abre una tarjeta con animación mostrando un modelo
@@ -526,7 +527,7 @@ class _Modal3DCard extends StatelessWidget {
                         child: kIsWeb
                             ? WebIframeViewer(
                                 src: 'model_viewer.html?src='
-                                    '${Uri.encodeComponent(_placeholderModelAsset)}',
+                                    '${Uri.encodeComponent(_placeholderModelAssetWeb)}',
                               )
                             : ModelViewer(
                                 backgroundColor: Colors.transparent,
