@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../utils/page_transitions.dart';
 import 'home_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           // Fondo: interior del restaurante
           Image.asset(
-            'assets/image/welcome.png',
+            'assets/image/welcome.jpg',
             fit: BoxFit.cover,
           ),
 
@@ -172,28 +173,7 @@ class WelcomeScreen extends StatelessWidget {
 
   void _goToHome(BuildContext context) {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 600),
-        reverseTransitionDuration: const Duration(milliseconds: 400),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const HomeScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final fade = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOut,
-          );
-          final slide = Tween<Offset>(
-            begin: const Offset(0, 0.08),
-            end: Offset.zero,
-          ).animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-          );
-          return FadeTransition(
-            opacity: fade,
-            child: SlideTransition(position: slide, child: child),
-          );
-        },
-      ),
+      AppPageRoute.premiumEntry<void>(const HomeScreen()),
     );
   }
 }

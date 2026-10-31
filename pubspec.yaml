@@ -38,6 +38,9 @@ dependencies:
   # Tipografías elegantes (para el título estilo manuscrito)
   google_fonts: ^6.2.1
 
+  # Visor de modelos 3D (.glb/.gltf) para la tarjeta "Ver en 3D"
+  model_viewer_plus: ^1.9.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -65,10 +68,11 @@ flutter:
     - assets/image/MojarraCoco.jpg
     - assets/image/CarneSalada.jpg
     - assets/image/PastelCerdo.jpg
-    - assets/image/CarneroGuisado.png
-    - assets/image/fondoRestaurantee.png
-    - assets/image/welcome.png
+    - assets/image/CarneroGuisado.jpg
+    - assets/image/fondoRestaurantee.jpg
+    - assets/image/welcome.jpg
     - assets/image/h2.jpg
+    - assets/models/pizza.glb
 
   # To add assets to your application, add an assets section, like this:
   # assets:

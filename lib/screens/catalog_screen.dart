@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/dish.dart';
+import '../utils/page_transitions.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/bottom_nav.dart';
 import 'dish_detail_screen.dart';
@@ -53,7 +54,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         children: [
           // Fondo: foto del restaurante
           Image.asset(
-            'assets/image/fondoRestaurantee.png',
+            'assets/image/fondoRestaurantee.jpg',
             fit: BoxFit.cover,
           ),
 
@@ -89,32 +90,49 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 const SizedBox(height: 14),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      ..._filteredDishes.map((dish) => _DishCard(
-                            dish: dish,
-                            isFavorite: _favorites.contains(dish.name),
-                            onToggleFavorite: () {
-                              setState(() {
-                                if (_favorites.contains(dish.name)) {
-                                  _favorites.remove(dish.name);
-                                } else {
-                                  _favorites.add(dish.name);
-                                }
-                              });
-                            },
-                          )),
-                      if (_filteredDishes.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40),
-                          child: Center(
-                            child: Text(
-                              'No encontramos platos con ese nombre',
-                              style: GoogleFonts.poppins(color: Colors.white70),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, 0.03),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    ),
+                    child: Column(
+                      key: ValueKey(_selectedCategory),
+                      children: [
+                        ..._filteredDishes.map((dish) => _DishCard(
+                              dish: dish,
+                              isFavorite: _favorites.contains(dish.name),
+                              onToggleFavorite: () {
+                                setState(() {
+                                  if (_favorites.contains(dish.name)) {
+                                    _favorites.remove(dish.name);
+                                  } else {
+                                    _favorites.add(dish.name);
+                                  }
+                                });
+                              },
+                            )),
+                        if (_filteredDishes.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 40),
+                            child: Center(
+                              child: Text(
+                                'No encontramos platos con ese nombre',
+                                style:
+                                    GoogleFonts.poppins(color: Colors.white70),
+                              ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -273,14 +291,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     if (index == 1) return;
     if (index == 0) {
       Navigator.of(context).push(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 350),
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const HomeScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
+        AppPageRoute.tabSlide<void>(const HomeScreen(), toRight: false),
       );
       return;
     }
@@ -341,23 +352,8 @@ class _DishCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 onTap: () {
                   Navigator.of(context).push(
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 500),
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          DishDetailScreen(dish: dish),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        final fade = CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeInOut,
-                        );
-                        final scale = Tween<double>(begin: 0.94, end: 1.0)
-                            .animate(fade);
-                        return FadeTransition(
-                          opacity: fade,
-                          child: ScaleTransition(scale: scale, child: child),
-                        );
-                      },
+                    AppPageRoute.dishDetail<void>(
+                      DishDetailScreen(dish: dish),
                     ),
                   );
                 },
@@ -368,11 +364,14 @@ class _DishCard extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(14),
-                        child: Image.asset(
-                          dish.imageAsset,
-                          width: 92,
-                          height: 112,
-                          fit: BoxFit.cover,
+                        child: Hero(
+                          tag: 'dish-image-${dish.name}',
+                          child: Image.asset(
+                            dish.imageAsset,
+                            width: 92,
+                            height: 112,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),

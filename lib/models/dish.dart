@@ -111,7 +111,7 @@ const List<Dish> dishes = [
   ),
   Dish(
     name: 'Carnero Guisado',
-    imageAsset: 'assets/image/CarneroGuisado.png',
+    imageAsset: 'assets/image/CarneroGuisado.jpg',
     rating: 5,
     ratingValue: 4.9,
     reviews: 112,

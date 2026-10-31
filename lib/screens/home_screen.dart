@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/dish.dart';
+import '../utils/page_transitions.dart';
 import '../widgets/bottom_nav.dart';
 import 'catalog_screen.dart';
 
@@ -24,7 +25,7 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/image/fondoRestaurantee.png', fit: BoxFit.cover),
+          Image.asset('assets/image/fondoRestaurantee.jpg', fit: BoxFit.cover),
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -74,14 +75,7 @@ class HomeScreen extends StatelessWidget {
     if (index == 0) return;
     if (index == 1) {
       Navigator.of(context).push(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 350),
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const CatalogScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
+        AppPageRoute.tabSlide<void>(const CatalogScreen(), toRight: true),
       );
       return;
     }

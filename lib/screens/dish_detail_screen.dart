@@ -70,7 +70,7 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/image/fondoRestaurantee.png',
+            'assets/image/fondoRestaurantee.jpg',
             fit: BoxFit.cover,
           ),
           Container(
@@ -182,8 +182,13 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
           fit: StackFit.expand,
           children: [
             // Foto estándar del plato, horizontal y recortada en todo
-            // el cuadro.
-            Image.asset(dish.imageAsset, fit: BoxFit.cover),
+            // el cuadro. Usa el mismo `Hero` tag que la tarjeta del
+            // catálogo para que la imagen "vuele" de una pantalla a
+            // la otra al abrir/cerrar el plato.
+            Hero(
+              tag: 'dish-image-${dish.name}',
+              child: Image.asset(dish.imageAsset, fit: BoxFit.cover),
+            ),
 
             // Viñeta sutil para que el botón resalte sobre la foto
             Container(
@@ -314,9 +319,9 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          childAspectRatio: 2.7,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          childAspectRatio: 2.5,
           children:
               dish.ingredients.map((ing) => _buildIngredientChip(ing)).toList(),
         ),
@@ -325,35 +330,37 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
   }
 
   Widget _buildIngredientChip(String ingredient) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: const BoxDecoration(
+              color: _gold,
+              shape: BoxShape.circle,
+            ),
           ),
-          child: Row(
-            children: [
-              const Icon(Icons.eco_rounded, color: _gold, size: 15),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  ingredient,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 12.5,
-                  ),
-                ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              ingredient,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
