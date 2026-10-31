@@ -8,6 +8,7 @@ import '../models/dish.dart';
 import '../utils/page_transitions.dart';
 import '../widgets/bottom_nav.dart';
 import 'catalog_screen.dart';
+import 'favorites_screen.dart';
 
 /// Pantalla de Inicio: presentación del restaurante (quiénes somos,
 /// cifras, lo que nos hace únicos, carrusel de platos insignia,
@@ -79,12 +80,17 @@ class HomeScreen extends StatelessWidget {
       );
       return;
     }
-    final labels = {2: 'Favoritos', 3: 'Perfil'};
+    if (index == 2) {
+      Navigator.of(context).push(
+        AppPageRoute.tabSlide<void>(const FavoritesScreen(), toRight: true),
+      );
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Próximamente: ${labels[index]}'),
+      const SnackBar(
+        content: Text('Próximamente: Perfil'),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFF0D3B4C),
+        backgroundColor: Color(0xFF0D3B4C),
       ),
     );
   }

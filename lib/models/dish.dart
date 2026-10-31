@@ -9,6 +9,7 @@ class Dish {
   final String category;
   final String description;
   final List<String> ingredients;
+  final int favoritesCount; // cuántas personas lo han marcado como favorito
 
   const Dish({
     required this.name,
@@ -20,6 +21,7 @@ class Dish {
     required this.category,
     this.description = '',
     this.ingredients = const [],
+    this.favoritesCount = 0,
   });
 }
 
@@ -42,6 +44,7 @@ const List<Dish> dishes = [
     reviews: 124,
     price: '\$18.500 COP',
     category: 'Sopas',
+    favoritesCount: 38,
     description: 'Sopa tradicional con queso costeño, maíz y plátano.',
     ingredients: [
       'Ñame',
@@ -60,6 +63,7 @@ const List<Dish> dishes = [
     reviews: 98,
     price: '\$22.000 COP',
     category: 'Pescados',
+    favoritesCount: 31,
     description:
         'Mojarra fresca acompañada de arroz de coco, patacón y ensalada.',
     ingredients: [
@@ -79,6 +83,7 @@ const List<Dish> dishes = [
     reviews: 87,
     price: '\$17.500 COP',
     category: 'Carnes',
+    favoritesCount: 24,
     description:
         'Tradicional sancocho con carne salada, plátano, yuca y mazorca.',
     ingredients: [
@@ -98,6 +103,7 @@ const List<Dish> dishes = [
     reviews: 76,
     price: '\$15.000 COP',
     category: 'Tradicionales',
+    favoritesCount: 19,
     description:
         'Delicioso pastel relleno de carne de cerdo, con un sabor único de la costa.',
     ingredients: [
@@ -117,6 +123,7 @@ const List<Dish> dishes = [
     reviews: 112,
     price: '\$23.000 COP',
     category: 'Carnes',
+    favoritesCount: 27,
     description: 'Carnero guisado lentamente con sofrito criollo costeño.',
     ingredients: [
       'Carne de carnero',
@@ -126,5 +133,59 @@ const List<Dish> dishes = [
       'Comino',
       'Papa criolla',
     ],
+  ),
+];
+
+/// Cuántas personas en total han marcado al menos un plato como
+/// favorito (dato simulado, para la pantalla de Favoritos).
+const int totalPeopleWhoFavorited = 50;
+
+/// Una persona marcando un plato como favorito "hace un momento" —
+/// usado en la fila de historias y el ranking de la pantalla de
+/// Favoritos. Son datos simulados mientras no haya cuentas reales.
+class FavoriteActivity {
+  final String personName;
+  final String dishName;
+  final String timeAgo;
+  final int avatarColorValue;
+
+  const FavoriteActivity({
+    required this.personName,
+    required this.dishName,
+    required this.timeAgo,
+    required this.avatarColorValue,
+  });
+}
+
+const List<FavoriteActivity> favoriteActivities = [
+  FavoriteActivity(
+    personName: 'Valeria',
+    dishName: 'Mojarra Frita con Arroz de Coco',
+    timeAgo: 'hace 2 h',
+    avatarColorValue: 0xFFE57373,
+  ),
+  FavoriteActivity(
+    personName: 'Carlos',
+    dishName: 'Mote de Queso',
+    timeAgo: 'hace 5 h',
+    avatarColorValue: 0xFF64B5F6,
+  ),
+  FavoriteActivity(
+    personName: 'Ana',
+    dishName: 'Carnero Guisado',
+    timeAgo: 'hace 8 h',
+    avatarColorValue: 0xFFBA68C8,
+  ),
+  FavoriteActivity(
+    personName: 'Luis',
+    dishName: 'Sancocho de Carne Salada',
+    timeAgo: 'ayer',
+    avatarColorValue: 0xFF81C784,
+  ),
+  FavoriteActivity(
+    personName: 'Camila',
+    dishName: 'Mote de Queso',
+    timeAgo: 'ayer',
+    avatarColorValue: 0xFFFFB74D,
   ),
 ];

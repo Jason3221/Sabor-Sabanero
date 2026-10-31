@@ -8,6 +8,7 @@ import '../utils/page_transitions.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/bottom_nav.dart';
 import 'dish_detail_screen.dart';
+import 'favorites_screen.dart';
 import 'home_screen.dart';
 
 class CatalogScreen extends StatefulWidget {
@@ -43,7 +44,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         return Icons.dinner_dining_rounded;
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -295,12 +296,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
       );
       return;
     }
-    final labels = {2: 'Favoritos', 3: 'Perfil'};
+    if (index == 2) {
+      Navigator.of(context).push(
+        AppPageRoute.tabSlide<void>(const FavoritesScreen(), toRight: true),
+      );
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Próximamente: ${labels[index]}'),
+      const SnackBar(
+        content: Text('Próximamente: Perfil'),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFF0D3B4C),
+        backgroundColor: Color(0xFF0D3B4C),
       ),
     );
   }
