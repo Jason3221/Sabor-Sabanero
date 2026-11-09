@@ -10,19 +10,38 @@ import '../widgets/web_iframe_viewer.dart';
 
 /// Visor 3D a pantalla completa: fondo transparente/oscuro liso (sin la
 /// foto del restaurante ni ningún otro elemento), el modelo ocupando
-/// todo el espacio disponible y una flecha para volver atrás. Se abre
-/// desde el botón "Ver en 3D" de [DishDetailScreen] cuando el plato
-/// tiene [Dish.modelAsset].
+/// todo el espacio disponible y una flecha para volver atrás.
+///
+/// Se abre desde dos lugares: el botón "Ver en 3D" de
+/// [DishDetailScreen] (usa [Dish.modelAsset]) y, cuando el plato tiene
+/// [Dish.arModelAsset], el botón "Ver en cámara" — en ese caso [ar] va
+/// en `true` y se activa el modo de realidad aumentada del visor.
 class Model3DScreen extends StatelessWidget {
   final Dish dish;
 
-  const Model3DScreen({super.key, required this.dish});
+  /// Nombre del archivo .glb a mostrar (sin ruta). Se arma afuera
+  /// (normalmente `dish.modelAsset` o `dish.arModelAsset`) para poder
+  /// usar, mientras se prueba, el modelo de otro plato sin que eso
+  /// afecte el botón normal "Ver en 3D".
+  final String modelFile;
+
+  /// Si es `true`, activa el modo "Ver en cámara" (realidad aumentada):
+  /// el visor muestra su propio botón de cámara que, en Android/Chrome,
+  /// abre Google Scene Viewer para ubicar el modelo sobre una
+  /// superficie real.
+  final bool ar;
+
+  const Model3DScreen({
+    super.key,
+    required this.dish,
+    required this.modelFile,
+    this.ar = false,
+  });
 
   static const _gold = Color(0xFFFFC107);
 
   @override
   Widget build(BuildContext context) {
-    final modelFile = dish.modelAsset;
     final webSrc = 'models/$modelFile';
     final assetSrc = 'assets/models/$modelFile';
 
@@ -69,24 +88,26 @@ class Model3DScreen extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  modelFile == null
-                      ? const SizedBox.shrink()
-                      : kIsWeb
-                          ? WebIframeViewer(
-                              src: 'model_viewer.html?src='
-                                  '${Uri.encodeComponent(webSrc)}',
-                            )
-                          : ModelViewer(
-                              backgroundColor: Colors.transparent,
-                              src: assetSrc,
-                              alt: 'Modelo 3D de ${dish.name}',
-                              autoRotate: true,
-                              autoRotateDelay: 0,
-                              rotationPerSecond: '18deg',
-                              cameraControls: true,
-                              disableZoom: false,
-                              ar: false,
-                            ),
+                  kIsWeb
+                      ? WebIframeViewer(
+                          src: 'model_viewer.html?src='
+                              '${Uri.encodeComponent(webSrc)}'
+                              '${ar ? '&ar=1' : ''}',
+                        )
+                      : ModelViewer(
+                          backgroundColor: Colors.transparent,
+                          src: assetSrc,
+                          alt: 'Modelo 3D de ${dish.name}',
+                          autoRotate: true,
+                          autoRotateDelay: 0,
+                          rotationPerSecond: '18deg',
+                          cameraControls: true,
+                          disableZoom: false,
+                          ar: ar,
+                          arModes: const ['scene-viewer', 'webxr', 'quick-look'],
+                          arScale: ArScale.auto,
+                          arPlacement: ArPlacement.floor,
+                        ),
                   Positioned(
                     left: 24,
                     right: 24,
@@ -94,7 +115,9 @@ class Model3DScreen extends StatelessWidget {
                     child: IgnorePointer(
                       child: Center(
                         child: Text(
-                          'Arrastra para girar el modelo · pellizca para zoom',
+                          ar
+                              ? 'Toca el ícono de cámara para verlo sobre tu mesa'
+                              : 'Arrastra para girar el modelo · pellizca para zoom',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             color: Colors.white54,

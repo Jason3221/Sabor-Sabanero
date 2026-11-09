@@ -18,6 +18,15 @@ class Dish {
   /// un modelo 3D real y el botón "Ver en 3D" no se muestra.
   final String? modelAsset;
 
+  /// Nombre del archivo .glb que se usa para el botón "Ver en cámara"
+  /// (realidad aumentada: el modelo aparece parado sobre una superficie
+  /// real a través de la cámara). Es un campo aparte de [modelAsset]
+  /// porque, mientras se prueba, puede apuntar a un modelo de otro
+  /// plato (por ejemplo el de la pizza) solo para validar que el flujo
+  /// de cámara funcione, sin activar el botón normal "Ver en 3D" para
+  /// ese plato. Si es `null`, el plato no muestra "Ver en cámara".
+  final String? arModelAsset;
+
   const Dish({
     required this.name,
     required this.imageAsset,
@@ -30,6 +39,7 @@ class Dish {
     this.ingredients = const [],
     this.favoritesCount = 0,
     this.modelAsset,
+    this.arModelAsset,
   });
 }
 
@@ -99,6 +109,10 @@ const List<Dish> dishes = [
     price: '\$18.500 COP',
     category: 'Sopas',
     favoritesCount: 38,
+    // Prueba de "Ver en cámara" (AR): mientras no esté el modelo 3D
+    // real del Mote de Queso, usamos el de la pizza solo para validar
+    // que el botón y el flujo de cámara funcionen.
+    arModelAsset: 'pizza.glb',
     description: 'Sopa tradicional con queso costeño, maíz y plátano.',
     ingredients: [
       'Ñame',

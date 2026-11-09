@@ -25,7 +25,17 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
 
   void _open3DViewer(Dish dish) {
     Navigator.of(context).push(
-      AppPageRoute.fullscreenFade<void>(Model3DScreen(dish: dish)),
+      AppPageRoute.fullscreenFade<void>(
+        Model3DScreen(dish: dish, modelFile: dish.modelAsset!),
+      ),
+    );
+  }
+
+  void _openArViewer(Dish dish) {
+    Navigator.of(context).push(
+      AppPageRoute.fullscreenFade<void>(
+        Model3DScreen(dish: dish, modelFile: dish.arModelAsset!, ar: true),
+      ),
     );
   }
 
@@ -72,6 +82,10 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
                         _buildIngredients(dish),
                         const SizedBox(height: 26),
                         _buildOrderButton(context, dish),
+                        if (dish.arModelAsset != null) ...[
+                          const SizedBox(height: 12),
+                          _buildArButton(context, dish),
+                        ],
                       ],
                     ),
                   ),
@@ -368,6 +382,40 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
             ),
             const SizedBox(width: 8),
             const Icon(Icons.shopping_bag_rounded, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Botón de prueba "Ver en cámara" (realidad aumentada). Solo aparece
+  /// en los platos que tienen [Dish.arModelAsset] — por ahora, mientras
+  /// se valida el flujo, únicamente el Mote de Queso.
+  Widget _buildArButton(BuildContext context, Dish dish) {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: OutlinedButton(
+        onPressed: () => _openArViewer(dish),
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: _gold),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Ver en cámara',
+              style: GoogleFonts.poppins(
+                color: _gold,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.camera_alt_rounded, size: 18, color: _gold),
           ],
         ),
       ),

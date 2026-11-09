@@ -69,6 +69,7 @@
   <script>
     var params = new URLSearchParams(window.location.search);
     var src = params.get('src');
+    var arEnabled = params.get('ar') === '1';
     var viewer = document.getElementById('viewer');
     var loading = document.getElementById('loading');
 
@@ -81,6 +82,18 @@
 
     if (src) {
       viewer.setAttribute('src', src);
+    }
+
+    // Modo "Ver en cámara" (AR): solo se activa cuando la página se abre
+    // con ?ar=1 en la URL, así que no afecta al visor normal de "Ver en
+    // 3D" de los demás platos. Usa el botón de AR propio de
+    // <model-viewer>, que en Android/Chrome abre Google Scene Viewer
+    // para ubicar el modelo sobre una superficie real.
+    if (arEnabled) {
+      viewer.setAttribute('ar', '');
+      viewer.setAttribute('ar-modes', 'scene-viewer webxr quick-look');
+      viewer.setAttribute('ar-scale', 'auto');
+      viewer.setAttribute('ar-placement', 'floor');
     }
   </script>
 </body>
