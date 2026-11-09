@@ -10,6 +10,7 @@ import '../widgets/bottom_nav.dart';
 import 'dish_detail_screen.dart';
 import 'favorites_screen.dart';
 import 'home_screen.dart';
+import 'profile_screen.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -32,6 +33,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   IconData _iconForCategory(String category) {
     switch (category) {
+      case 'Antojos':
+        return Icons.lunch_dining_rounded;
       case 'Sopas':
         return Icons.ramen_dining_rounded;
       case 'Pescados':
@@ -44,7 +47,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         return Icons.dinner_dining_rounded;
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -302,12 +305,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
       );
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Próximamente: Perfil'),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF0D3B4C),
-      ),
+    Navigator.of(context).push(
+      AppPageRoute.tabSlide<void>(const ProfileScreen(), toRight: true),
     );
   }
 }

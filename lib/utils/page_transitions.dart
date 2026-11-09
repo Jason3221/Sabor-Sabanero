@@ -90,4 +90,23 @@ class AppPageRoute {
       },
     );
   }
+
+  /// Apertura del visor 3D a pantalla completa: solo un fade suave,
+  /// sin zoom ni desplazamiento, para que el modelo aparezca de forma
+  /// limpia sobre el fondo oscuro.
+  static PageRouteBuilder<T> fullscreenFade<T>(Widget page) {
+    return PageRouteBuilder<T>(
+      transitionDuration: const Duration(milliseconds: 320),
+      reverseTransitionDuration: const Duration(milliseconds: 260),
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+          reverseCurve: Curves.easeIn,
+        );
+        return FadeTransition(opacity: curved, child: child);
+      },
+    );
+  }
 }

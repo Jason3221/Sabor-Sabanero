@@ -1,28 +1,16 @@
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 import '../models/dish.dart';
-import '../widgets/web_iframe_viewer.dart';
-
-/// Ruta del modelo 3D de referencia que se muestra en el botón "Ver en
-/// 3D" de todos los platos, mientras no haya un modelo específico por
-/// plato. Cuando existan modelos individuales, basta con cambiar esto
-/// por `dish.modelAsset` (o el campo que se agregue al modelo `Dish`).
-///
-/// Se sirve como archivo estático del propio sitio (`web/models/pizza.glb`
-/// en Web, el asset de Flutter en móvil/escritorio) en vez de un servidor
-/// externo, para que cargue siempre al instante y no dependa de que otro
-/// servidor esté "despierto".
-const String _placeholderModelAssetWeb = 'models/pizza.glb';
-const String _placeholderModelAsset = 'assets/models/pizza.glb';
+import '../utils/page_transitions.dart';
+import 'model_3d_screen.dart';
 
 /// Pantalla de detalle de un plato: foto estándar del plato + botón
-/// "Ver en 3D" que abre una tarjeta con animación mostrando un modelo
-/// 3D real (.glb) con `model_viewer_plus`, y lista de ingredientes.
+/// "Ver en 3D" (solo si el plato tiene [Dish.modelAsset]) que abre el
+/// visor 3D a pantalla completa en [Model3DScreen], y lista de
+/// ingredientes.
 class DishDetailScreen extends StatefulWidget {
   final Dish dish;
 
@@ -36,28 +24,8 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
   static const _gold = Color(0xFFFFC107);
 
   void _open3DViewer(Dish dish) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Vista 3D',
-      barrierColor: Colors.black.withValues(alpha: 0.65),
-      transitionDuration: const Duration(milliseconds: 420),
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          _Modal3DCard(dish: dish),
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        final curved = CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutBack,
-          reverseCurve: Curves.easeIn,
-        );
-        return FadeTransition(
-          opacity: animation,
-          child: Transform.scale(
-            scale: 0.75 + (curved.value.clamp(0.0, 1.2) * 0.25),
-            child: child,
-          ),
-        );
-      },
+    Navigator.of(context).push(
+      AppPageRoute.fullscreenFade<void>(Model3DScreen(dish: dish)),
     );
   }
 
@@ -205,11 +173,12 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
               ),
             ),
 
-            Positioned(
-              top: 14,
-              right: 14,
-              child: _View3DButton(onTap: () => _open3DViewer(dish)),
-            ),
+            if (dish.modelAsset != null)
+              Positioned(
+                top: 14,
+                right: 14,
+                child: _View3DButton(onTap: () => _open3DViewer(dish)),
+              ),
           ],
         ),
       ),
@@ -459,113 +428,3 @@ class _View3DButton extends StatelessWidget {
   }
 }
 
-/// Tarjeta modal que se abre al tocar "Ver en 3D". Por ahora es un
-/// marcador de posición con fondo oscuro/translúcido; cuando exista el
-/// archivo .glb/.gltf del plato, el contenido central de esta tarjeta
-/// se reemplaza por el widget del visor 3D real (p. ej. model_viewer_plus).
-class _Modal3DCard extends StatelessWidget {
-  final Dish dish;
-
-  const _Modal3DCard({required this.dish});
-
-  static const _gold = Color(0xFFFFC107);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(22, 18, 22, 26),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: _gold.withValues(alpha: 0.35)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            dish.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).maybePop(),
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.08),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.close_rounded,
-                              color: Colors.white70,
-                              size: 17,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
-                      child: Container(
-                        height: 280,
-                        width: double.infinity,
-                        color: Colors.black.withValues(alpha: 0.25),
-                        child: kIsWeb
-                            ? WebIframeViewer(
-                                src: 'model_viewer.html?src='
-                                    '${Uri.encodeComponent(_placeholderModelAssetWeb)}',
-                              )
-                            : ModelViewer(
-                                backgroundColor: Colors.transparent,
-                                src: _placeholderModelAsset,
-                                alt: 'Modelo 3D de referencia',
-                                autoRotate: true,
-                                autoRotateDelay: 0,
-                                rotationPerSecond: '18deg',
-                                cameraControls: true,
-                                disableZoom: false,
-                                ar: false,
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Modelo de referencia — arrastra para girarlo, '
-                      'pellizca para zoom.',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        color: Colors.white54,
-                        fontSize: 11.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

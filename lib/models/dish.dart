@@ -11,6 +11,13 @@ class Dish {
   final List<String> ingredients;
   final int favoritesCount; // cuántas personas lo han marcado como favorito
 
+  /// Nombre del archivo .glb del modelo 3D del plato (p. ej.
+  /// `'pizza.glb'`), sin ruta. Se usa para construir tanto la ruta del
+  /// asset de Flutter (`assets/models/<archivo>`) como la del visor
+  /// web (`models/<archivo>`). Si es `null`, el plato todavía no tiene
+  /// un modelo 3D real y el botón "Ver en 3D" no se muestra.
+  final String? modelAsset;
+
   const Dish({
     required this.name,
     required this.imageAsset,
@@ -22,12 +29,14 @@ class Dish {
     this.description = '',
     this.ingredients = const [],
     this.favoritesCount = 0,
+    this.modelAsset,
   });
 }
 
 /// Categorías disponibles para filtrar el catálogo.
 const List<String> categories = [
   'Todos',
+  'Antojos',
   'Sopas',
   'Pescados',
   'Carnes',
@@ -36,6 +45,51 @@ const List<String> categories = [
 
 /// Catálogo de platos típicos de la costa Caribe colombiana.
 const List<Dish> dishes = [
+  Dish(
+    name: 'Pizza Artesanal',
+    imageAsset: 'assets/image/Pizza.jpg',
+    rating: 5,
+    ratingValue: 4.8,
+    reviews: 45,
+    price: '\$14.000 COP',
+    category: 'Antojos',
+    favoritesCount: 21,
+    modelAsset: 'pizza.glb',
+    description:
+        'Masa artesanal horneada al momento, con salsa de tomate casera, '
+        'queso derretido y un toque costeño en los bordes dorados y '
+        'crujientes.',
+    ingredients: [
+      'Masa artesanal',
+      'Salsa de tomate',
+      'Queso mozzarella',
+      'Orégano',
+      'Aceite de oliva',
+      'Albahaca fresca',
+    ],
+  ),
+  Dish(
+    name: 'Perro Caliente Costeño',
+    imageAsset: 'assets/image/perroCaliente.jpg',
+    rating: 4,
+    ratingValue: 4.5,
+    reviews: 32,
+    price: '\$12.000 COP',
+    category: 'Antojos',
+    favoritesCount: 16,
+    modelAsset: 'perroCaliente.glb',
+    description:
+        'Salchicha jugosa en pan tostado, con piña, papitas, salsas de la '
+        'casa y ese toque callejero que tanto gusta en la costa.',
+    ingredients: [
+      'Salchicha',
+      'Pan brioche',
+      'Piña en trozos',
+      'Papitas trituradas',
+      'Salsa rosada',
+      'Queso rallado',
+    ],
+  ),
   Dish(
     name: 'Mote de Queso',
     imageAsset: 'assets/image/MoteDeQueso.jpg',

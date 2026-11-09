@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import '../utils/page_transitions.dart';
 import '../widgets/bottom_nav.dart';
 import 'catalog_screen.dart';
 import 'home_screen.dart';
+import 'profile_screen.dart';
 
 /// Pantalla "Los más queridos": historias de quién marcó qué como
 /// favorito, el plato más favorito destacado y un ranking de la casa.
@@ -77,12 +77,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       );
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Próximamente: Perfil'),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF0D3B4C),
-      ),
+    Navigator.of(context).push(
+      AppPageRoute.tabSlide<void>(const ProfileScreen(), toRight: true),
     );
   }
 

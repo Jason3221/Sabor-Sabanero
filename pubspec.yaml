@@ -64,6 +64,8 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/image/Pizza.jpg
+    - assets/image/perroCaliente.jpg
     - assets/image/MoteDeQueso.jpg
     - assets/image/MojarraCoco.jpg
     - assets/image/CarneSalada.jpg
@@ -73,6 +75,7 @@ flutter:
     - assets/image/welcome.jpg
     - assets/image/h2.jpg
     - assets/models/pizza.glb
+    - assets/models/perroCaliente.glb
 
   # To add assets to your application, add an assets section, like this:
   # assets:

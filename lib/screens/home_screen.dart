@@ -9,6 +9,7 @@ import '../utils/page_transitions.dart';
 import '../widgets/bottom_nav.dart';
 import 'catalog_screen.dart';
 import 'favorites_screen.dart';
+import 'profile_screen.dart';
 
 /// Pantalla de Inicio: presentación del restaurante (quiénes somos,
 /// cifras, lo que nos hace únicos, carrusel de platos insignia,
@@ -86,12 +87,8 @@ class HomeScreen extends StatelessWidget {
       );
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Próximamente: Perfil'),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF0D3B4C),
-      ),
+    Navigator.of(context).push(
+      AppPageRoute.tabSlide<void>(const ProfileScreen(), toRight: true),
     );
   }
 
